@@ -29,10 +29,6 @@ int global_sim_step = 1;
 /* global variables */
 double * x = NULL, * y = NULL, * z = NULL;
 
-#include <plotlib.h>
-data_t points,points2,points3;
-
-
 void comp_lorenz();
 void display(void);
 void pick(GLint name);
@@ -42,9 +38,6 @@ static double ftime(void);
 
 int main(int argc, char * argv [])
 {
-   exampleData(&points,3);
-   exampleData(&points2,1);
-   exampleData(&points3,2);
    
    int i = 0;
    x = (double *) malloc( 3 * MAX_STEPS * sizeof(double));
@@ -152,12 +145,11 @@ void drawAxes(void)
        is pressed.  Names are ignored in normal
        OpenGL rendering mode.                    */
 	/* Render animation */
-	/*
 	glPushMatrix();
 	
 	glBegin(GL_LINE_STRIP);
 	
-	// get normalization values 
+	/* get normalization values */
 	for(i = 0; i < global_sim_step; i++){
 		if(x[i] < xmin){	xmin = x[i];	}
 		if(x[i] > xmax){	xmax = x[i];	}	
@@ -191,7 +183,7 @@ void drawAxes(void)
 		}
 	}
 	glEnd();
-	*/
+	
 	#define axis(x,y,z)		\
 		glVertex3f(0,0,0);	\
 		glVertex3f(x,y,z);
@@ -240,17 +232,16 @@ void drawAxes(void)
 	glutStrokeCharacter(GLUT_STROKE_ROMAN, 'z');
 	glPopMatrix();
 	
-	//glPopMatrix();
+	glPopMatrix();
 }
 
 /* Callback function for drawing */
 void display(void)
 {
    GLERROR;
-	
+
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    drawAxes();
-   plot(&points);plot(&points2);plot(&points3);
    glutSwapBuffers();
    glFlush();
    GLERROR;
