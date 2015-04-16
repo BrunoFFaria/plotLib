@@ -33,6 +33,5 @@ void * mem_alloc(int32_t size, bool zero_set)
 void free_mem(void * ptr)
 {
 	free( ptr );
-    ptr = NULL;
 }
 

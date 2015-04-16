@@ -10,6 +10,7 @@ enum error_codes{
 
 	extern const char * error_strings[NUM_ERROR_CODES];
 
+	
 	/* prototype error function */
 	#define C_SAFE_CALL(call)	\
 		do																						\

@@ -24,6 +24,7 @@
 			double zmin;
 			double zmax;
 		}tranf_map_t;
+		
 		/* define our plot object */
 		// TODO think how to do subplotting 
 		typedef struct plot{
@@ -52,7 +53,7 @@
 			int32_t (* set_layer_col)(self *,int32_t, int32_t);
 			int32_t (* set_layer_linetype)(self *,int32_t, int32_t);
 			
-			/* error code : if there is any error it is reported in this variable */
+			/* error code : if there is any error, it is reported in this variable */
 			int32_t error_code;
 		}plot_t;
 
