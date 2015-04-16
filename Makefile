@@ -1,5 +1,5 @@
 # escolhe compilador
-CC=icc			
+CC=gcc			
 # flags a passar ao compilador 
 # -O3 -mssse3 -align -xssse3 -axssse3
 CFLAGS= -c  -Wall -O3 -std=c99
