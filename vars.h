@@ -38,10 +38,10 @@
 			/* plot layers */
 			plt_layer_t * layers;
 			
-			/* transforma mapping properties */
+			/* transform mapping properties */
 			transf_map_t map;
 			
-			/* define common operations titles labels etc */
+			/* define common operations: titles labels etc */
 			char * xlabel;
 			char * ylabel;
 			char * zlabel;
