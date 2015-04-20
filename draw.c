@@ -7,7 +7,7 @@ void plt_show(plot_t * plt){
 	/* register thread in the queue */
 	C_SAFE_CALL( register_plt(plt) );
 	
-	/* thread maybe in the queue,
+	/* thread may be in the queue,
 	 * but will not be updated 
 	 * unless we mark it to redraw
 	 */
@@ -27,5 +27,7 @@ void plt_add_layer(plot_t * plt){
 	/* allocate memory for the layer */
 	
 	/* increase number of layers */
+	
+	/* adjust mapping parameters */
 }
 
