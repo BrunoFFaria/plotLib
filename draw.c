@@ -1,37 +1,31 @@
 #include "draw.h"
 #include "ogl.h"
 
-// show current plot
+/* show current plot */
 void plt_show(plot_t * plt){
-	static int thread_number = 0;
-	/* verify if object thread is already active */
-	if(plt->thread_state){
-		plt->thread_number = thread_number;
-		
-		#ifdef WIN32
-			
-		#elif __linux__
-			 // create all threads one by one
-			result_code = pthread_create(plt->thread_number, NULL, display_plot, NULL);
-		#endif
-		thread_state = true;
-		thread_number++;
-	}else{
-		
-	
-	}
-	
-	/* thread is active */
-	
-	/* now show data on screen */
 
+	/* register thread in the queue */
+	C_SAFE_CALL( register_plt(plt) );
+	
+	/* thread maybe in the queue,
+	 * but will not be updated 
+	 * unless we mark it to redraw
+	 */
+	C_SAFE_CALL( queue_plt_redraw(plt) );
+	
+	SET_API_ERROR(API_SUCCESS);
+	return;
+error:
+
+	SET_API_ERROR();
 }
 
 // add another layer to the current plot
-void plt_add_layer(){
+void plt_add_layer(plot_t * plt){
+	/* invalidate any plot redraw command */
+
 	/* allocate memory for the layer */
 	
 	/* increase number of layers */
-
 }
 

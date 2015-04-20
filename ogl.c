@@ -1,24 +1,42 @@
 #include "ogl.h"
 
-/* the executing thread should use its value to pull the object from the objects list and draw that object */
-/* updating the object list should be done using mutexes... */
-
-plt_t ** drawing_objects;
+/* declare the global lib state here */
+plotLib_t pL;
 
 /* function responsible to keep the object updated on screen */
-int draw_object(void)
+void plotlib_thread(void)
 {
-	
+	int fake = 0;
+	glutInit(&fake, NULL);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
-
-	
 	while(1){
-		/* call glut to render handle some events */
-		glutMainLoop();
+		/* query plotLib thread msg (should this thread exit?)*/
 		
-		/* should we redraw the current window ?*/
+		/* verify that all redrawing threads have a window to draw to,
+		 * if not create the windows...
+		 */
 		
-		
-	}
 	
+		/* call glut to render and handle events */
+		glutMainLoopUpdate();
+	}	
 }
+
+
+/* each time a show command is issued 
+ * we need to query if the object is in the queue 
+ */
+ void register_plt(plot_t * plt){
+ 
+ }
+ 
+ /* schedule plot to be drawn on screen */
+ void queue_plt_redraw(plot_t * plot){
+ 
+ }
+ 
+ /* unregister plot from queue */
+ void unregister_plt(plot_t * plt){
+ 
+ }

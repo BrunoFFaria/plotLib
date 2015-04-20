@@ -20,8 +20,11 @@ error:
 	return NULL;
 }
 
-
+/* WARNING: before killing the object we need to unregister it from the queue */
 void delete_plt(plot_t * plt){
+	if(plt!=NULL)
+		unregister_plt(plt);
+	
 	mem_free(plt);
 	
 	SET_API_ERROR(API_SUCCESS;
