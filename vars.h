@@ -49,6 +49,8 @@
 						
 		}plot_t;
 
+		enum thread_msgs {thread_msg_none,thread_msg_exit};
+		
 		/* plot lib state object */
 		typedef struct plotLib{
 			/* plot objects */
@@ -65,6 +67,15 @@
 			
 			/* messages to thread */
 			int32_t thread_msg;
+			
+			/* thread handle and lock states */
+			#ifdef WIN32
+				HANDLE h_thread;
+				HANDLE lock;
+			#elif defined __linux__ || defined __FreeBSD__ || defined __APPLE__
+				pthread_t		h_thread;
+				pthread_mutex_t lock;				 
+			#endif 
 		}plotLib_t;
 		
 #endif

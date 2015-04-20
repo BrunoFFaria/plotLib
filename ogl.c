@@ -12,7 +12,8 @@ void plotlib_thread(void)
 
 	while(1){
 		/* query plotLib thread msg (should this thread exit?)*/
-		
+		if(pL.thread_msg == thread_msg_exit)
+			break;
 		/* verify that all redrawing threads have a window to draw to,
 		 * if not create the windows...
 		 */
@@ -20,7 +21,9 @@ void plotlib_thread(void)
 	
 		/* call glut to render and handle events */
 		glutMainLoopUpdate();
-	}	
+	}
+	
+	/* shutdown glut */
 }
 
 
