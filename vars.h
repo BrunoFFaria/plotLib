@@ -1,5 +1,6 @@
 #ifndef VARSH
 	#define VARSH
+	
 		/* define the enumerator for plot type */
 		enum PLOT_TYPE{ LINE_2D, LINE_3D, SURF, MESH};
 		
@@ -9,6 +10,16 @@
 			double * y;
 			double * z;
 			size_t   size;
+			
+			/* the above data is commited to the next 
+			 * pointers with plt_show and consequently 
+			 * shown on scren
+			 */
+			 
+			double * xdata;
+			double * ydata;
+			double * zdata;
+			size_t   size_data;
 			
 			/* define layer properties */
 			char * legend;
@@ -46,7 +57,13 @@
 			char * ylabel;
 			char * zlabel;
 			char * title;
-						
+			
+			/* subplotting */
+			bool 	subplot_state;
+			int32_t subplot_dim[2];
+			int32_t subplot_num;
+			int32_t	subplot_link;
+			
 		}plot_t;
 
 		enum thread_msgs {thread_msg_none,thread_msg_exit};
@@ -59,19 +76,20 @@
 			/* number of plot objects */
 			int32_t   num_plts;
 			
-			/* plot objects state (0 -> do not touch, 1 -> redraw ) */
-			bool * plts_state;
-			
 			/* lib thread status*/
 			bool thread_state;
 			
 			/* messages to thread */
 			int32_t thread_msg;
 			
-			/* thread handle and lock states */
+			/* window and subplotting handler */
+			int32_t * windown_handle;
+			
+			/* thread handle, lock state and plot window handle */
 			#ifdef WIN32
 				HANDLE h_thread;
 				HANDLE lock;
+						
 			#elif defined __linux__ || defined __FreeBSD__ || defined __APPLE__
 				pthread_t		h_thread;
 				pthread_mutex_t lock;				 
