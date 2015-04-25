@@ -1,4 +1,11 @@
-#include "ogl.h"
+#include "interface.h"
+
+/* 
+ * This file makes the interface between the plotLib thread 
+ * and the aplication using it...
+ *
+ */
+
 
 /* declare the global lib state here */
 plotLib_t pL;
@@ -23,15 +30,159 @@ void plotlib_thread(void)
 		 * every plot must be drawn is open
 		 * if not create the window...
 		 */
-		
+		check_plts_windows();
 	
 		/* call glut to render and handle events */
 		glutMainLoopUpdate();
 	}
 	
 	/* shutdown glut */
+	
 }
 
+/* show current plots */
+/*
+ * function needs variable number of arguments
+ *
+ */
+void plt_show(plot_t * plt){
+
+	/* register thread in the queue */
+	C_SAFE_CALL( register_plt(plt) );
+	
+	/* thread may be in the queue,
+	 * but will not be updated 
+	 * unless we mark it to redraw
+	 */
+	C_SAFE_CALL( queue_plt_redraw(plt) );
+	
+	SET_API_ERROR(API_SUCCESS);
+	return;
+error:
+
+	SET_API_ERROR();
+}
+
+/* add another layer to the current plot
+ *
+ */
+void plt_add_layer(plot_t * plt){
+
+	/* allocate memory for the layer */
+	
+	/* increase number of layers */
+	
+	/* adjust mapping parameters */
+	
+}
+
+
+
+/* 
+ * multiplot 
+ * fixed inputs: plot dimension
+ * variable inputs : plots 
+ *  -> order of plots matters 
+ * 		-> plots are displayed left to right and top to down
+ * 		-> to ensure that the format is correct this function should be
+ *		   called in the following manner multiplot(xdim,ydim, ..., NULL);
+ */
+void multiplot(int32_t dim_x, int32_t dim_y, ...){
+	static int32_t link = 1;
+	va_list ap, ap_c;
+	plot_t * plt;
+	int32_t i = 0;
+	
+	C_CHECK_CONDITION( dim_x * dim_y <= 0, 
+		"Warning: wrong matrix dimensions - multiplot - \"no object specified\"");
+	
+	va_start(ap,dim_y); 
+	va_copy(ap_c, ap);
+	
+	for(i = 0; i < dim_x * dim_y; i++){
+		/* consume arguments one by one */
+		plt = va_arg(ap, plot_t *);
+		
+		C_CHECK_CONDITION( plt == NULL && (i+1) <= dim_x*dim_y,   
+			"Warning: matrix badly formatted wrong number of arguments or invalid plot");
+	}
+	
+	/* check if the last argument is null if it is not give error*/
+	plt = va_arg(ap, plot_t *);
+	C_CHECK_CONDITION( plt!=NULL,   
+			"Warning: matrix badly formatted or wrong number of arguments");
+	
+	va_end(ap);
+	
+	/* now that inputs have been verified input, lets work */		
+	for(i = 0; i < dim_x * dim_y ; i++){
+		plt = va_arg(ap_c, plot_t *);
+		plt->subplot_state = true;
+		plt->subplot_dim[0] = x_dim;
+		plt->subplot_dim[1] = y_dim;
+		plt->subplot_num = i;
+		plt->subplot_link = link;
+	}
+	va_end(ap_c);
+	
+	/* increment link */
+	link++;
+	
+error:
+	return;
+}
+
+/* 
+ * Before calling the drawn routines check if there is any window we need to open...
+ *
+ */
+#define VAR_NAME_LIMIT 128
+void check_plts_windows(void){
+	int32_t i = 0, j = 0;
+	int32_t link = 0;
+	
+	char buffer[VAR_NAME_LIMIT];
+	for(i = 0; i < pL.num_plts; i++){
+		if( pL.window_int[i] == -1 ){
+			/* is subplotting enabled ? */
+			if( pL.plts[i]->subplot_state == true ){
+				/* locate all plots 
+				 * belonging to this subplot
+				 * and open a common window 
+				 * ! multiplot should destroy 
+				 *   object window if it has one
+				 */
+				 link = pL.plts[i]->subplot_link;
+				 snprintf(buffer,VAR_NAME_LIMIT,"subplot_%d",link);
+				 
+				 /* use variable name or subplot + link name */
+				 pL.window_int[i] = createWindow(buffer);
+				 
+				 /* get the plots belonging to this subplot */
+				 for(j = i+1; j < pL.num_plts; j++){
+					if( pL.plts[j]->subplot_link == link){
+						/* 
+						 * if they already have a window and 
+						 * is the same as this one don't
+						 * do nothing otherwise kill it
+						 */
+						if( pL.window_int[j] != -1){
+							if(pL.window_int[j] != pL.window_int[i]){
+								glutDestroyWindow(pL.window_int[j]);
+							}
+							pL.window_int[j] = pL.window_int[i];
+						}
+					}
+				 }
+				 
+			}else{
+			     snprintf(buffer,VAR_NAME_LIMIT,"plot_%d",i);
+				 /* use variable name or subplot + link name */
+				 pL.window_int[i] = createWindow(buffer);
+			}
+		}
+	}
+}
 
 /* each time a show command is issued 
  * we need to query if the object is in the queue 
@@ -39,6 +190,9 @@ void plotlib_thread(void)
  void register_plt(plot_t * plt){
 	int32_t i = 0;
 	bool lock_acquired = false;
+	
+	C_CHECK_CONDITION( plt == NULL, API_BAD_INPUT);
+	
 	/* verify if plt is in the queue */
 	for(i = 0; i < pL.num_plts; i++){
 		if(pL.plts[i]==plt)
@@ -117,13 +271,13 @@ error:
 		layer = plt->layers[i];
 		/* verify if the size is the same if it is not reallocate */
 		if(layer->size != layer->size_data){
-			C_SAFE_CALL( layer->xdata = (double *) mem_realloc(
+			C_SAFE_CALL( layer->xdata = mem_realloc(
 							layer->xdata, layer->size * sizeof(plot_t *)) 
 					);
-			C_SAFE_CALL( layer->ydata = (double *) mem_realloc(
+			C_SAFE_CALL( layer->ydata = mem_realloc(
 							layer->ydata, layer->size * sizeof(plot_t *)) 
 					);
-			C_SAFE_CALL( layer->zdata = (double *) mem_realloc(
+			C_SAFE_CALL( layer->zdata = mem_realloc(
 							layer->zdata, layer->size * sizeof(plot_t *)) 
 					);
 			layer->size_data = layer->size;
@@ -151,6 +305,9 @@ error:
 	int32_t i = 0, j = 0;
 	int32_t link = 0, window_handle = 0;
 	bool lock_state = false;
+	
+	C_CHECK_CONDITION( plt == NULL, API_BAD_INPUT);
+	
 	C_SAFE_CALL( acquire_lock() );
 	lock_state = true;
 	
@@ -173,6 +330,8 @@ error:
 	
 	pL.num_plts--;
 	
+	/* reescale input */
+	
 	/* destroy plt window */
 	/* in subplotting do it only if the graphs 
 	 * belonging to the same window have all been 
@@ -182,7 +341,8 @@ error:
 	if(plt->subplot_state){
 		
 		/* get subplot link value */
-		C_CHECK_CONDITION( (link = plt -> subplot_link) == 0, "invalid subplot link");
+		C_CHECK_CONDITION( (link = plt -> subplot_link) == 0, 
+										"invalid subplot link");
 		
 		/* look for plots with the same link */
 		for(j=0; j < pL.num_plts; j++ )
@@ -190,13 +350,15 @@ error:
 				break;
 	
 		/* not found -> destroy plt window */
-		if(j>=pL.num_plts)
+		if(j>=pL.num_plts && window_handle > 0)
 			/* kill window */
-			
+			glutDestroyWindow(window_handle);
 	}else{
 		/* just kill the window */
-		
+		if(window_handle > 0)
+			glutDestroyWindow(window_handle);
 	}
+
 	C_SAFE_CALL( release_lock() );
  
 	SET_API_ERROR(API_SUCCESS);

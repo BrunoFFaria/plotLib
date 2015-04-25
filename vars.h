@@ -63,7 +63,6 @@
 			int32_t subplot_dim[2];
 			int32_t subplot_num;
 			int32_t	subplot_link;
-			
 		}plot_t;
 
 		enum thread_msgs {thread_msg_none,thread_msg_exit};
