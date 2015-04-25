@@ -1,2 +1,2 @@
 # plotLib
-A C based plotting library
+A simple C based plotting library
