@@ -23,9 +23,11 @@
 			
 			/* define layer properties */
 			char * legend;
-			int32_t color;
-			int32_t line_style;
 			
+			/* expose auxiliary layer data 
+			 * through a general pointer
+			 */
+			void * aux_layer_data;
 		}plt_layer_t;
 		
 		typedef struct tranform_map{
