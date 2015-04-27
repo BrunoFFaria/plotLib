@@ -18,8 +18,8 @@ void plotlib_thread(void)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	
 	/* register drawing functions */
-	glutDisplayFunc(draw);
-	glutIdleFunc(idle);
+	glutDisplayFunc(plt_draw);
+	glutIdleFunc(plt_idle);
 	
 	while(1){
 		/* query plotLib thread msg (should this thread exit?)*/
@@ -66,6 +66,30 @@ error:
 /* add another layer to the current plot
  *
  */
+ #define plt_grab_minmax(var, ind, min_v, max_v)	\
+		 do{										\
+			if(var!=NULL){							\
+				if(!(isnan(var[ind])==true ||		\
+					isinf(var[ind] == true)) ){		\
+					if(var[ind]>max_v){				\
+						max_v = var[ind];			\
+					}								\
+					if(var[ind)<min_v){				\
+						min_v = var[ind];			\
+					}								\
+				}else{								\
+					C_LOG_MSG("invalid number");	\
+				}									\
+			}while(0)			
+
+#define plt_ss_vals(var, min_v, max_v)		\
+		do{									\
+			if(var!=NULL){					\
+				min_v = var[0];				\
+				max_v = var[0];				\
+			}								\
+		}while(0)
+		
 void plt_add_layer(plot_t * plt, const double * x, const double * y, const double * z, size_t size){
 	plt_layer_t * layer = NULL;
 	
@@ -85,18 +109,31 @@ void plt_add_layer(plot_t * plt, const double * x, const double * y, const doubl
 	C_SAFE_CALL(layer->x = mem_alloc(3 * size * sizeof(double), true) ); 
 	layer->y = &layer->x[size];
 	layer->z = &layer->y[size];
-
+	
 	/* copy data */
-	memcpy(layer->x, x, size * sizeof(double));
-	memcpy(layer->y, y, size * sizeof(double));
-	memcpy(layer->z, z, size * sizeof(double));
+	if(x != NULL){ memcpy(layer->x, x, size * sizeof(double)); }
+	if(y != NULL){ memcpy(layer->y, y, size * sizeof(double)); }
+	if(z != NULL){ memcpy(layer->z, z, size * sizeof(double)); }
 	
 	/* adjust mapping parameters */
-	for(i = 0; i < size; i++){
-		/* validate data nans and infs don't count */
-			
+	
+	/* if parameters have never been set 
+	 * we need to start with the values 
+	 * of the array
+	 */
+	if(plt->map.state == false){
+		plt_ss_vals(x, plt->map.xmin, plt->map.xmax);
+		plt_ss_vals(y, plt->map.ymin, plt->map.ymax);
+		plt_ss_vals(z, plt->map.zmin, plt->map.zmax);		
+		plt->map.state = true;
 	}
 	
+	for(i = 0; i < size; i++){
+		/* validate data: nans and infs don't count */
+		plt_grab_minmax(x, i, plt->map.xmin, plt->map.xmax);
+		plt_grab_minmax(y, i, plt->map.ymin, plt->map.ymax);
+		plt_grab_minmax(z, i, plt->map.zmin, plt->map.zmax);
+	}
 	
 	/* optional parameters such as color 
 	 * and linestyle are to be given later

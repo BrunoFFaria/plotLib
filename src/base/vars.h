@@ -35,6 +35,7 @@
 			double ymax;
 			double zmin;
 			double zmax;
+			bool   state;
 		}tranf_map_t;
 		
 		/* define our plot object */

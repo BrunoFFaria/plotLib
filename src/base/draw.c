@@ -1,5 +1,9 @@
 #include "draw.h"
 
+/* validate and return number of arguments 
+ *
+ */
+ 
 void plt_validate_requirements(const plot_t * plt,const double * x, const double * y, const double * z ){
 	
 	/* validate plot type */
