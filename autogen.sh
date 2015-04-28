@@ -1,2 +1,2 @@
 #!/bin/bash
-autoreconf --force --install -I config -I src/lib
+autoreconf --force --install -I src/lib
