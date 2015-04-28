@@ -1,5 +1,6 @@
-lib_LIBRARIES = libplotlib.a
+lib_LIBRARIES = plotlib.a
 include_LIBRARIES = ../include
-libplotlib_SOURCES = $(base/*.c) $(modules/*.c) 
-libplotlib_CFLAGS =
-libplotlib_LDFLAGS = 
+plotlib_SOURCES=base/init.c ...
+plotlib_CFLAGS =
+plotlib_LDFLAGS = 
+
