@@ -95,12 +95,15 @@ void plt_add_layer(plot_t * plt, const double * x, const double * y, const doubl
 	
 	C_CHECK_CONDITION( plt == NULL, API_BAD_INPUT);
 	C_CHECK_CONDITION( size <= 0, API_BAD_INPUT);
-	
+	C_CHECK_CONDITION( plt->plt_type <= 0, API_BAD_INPUT);
+	C_CHECK_CONDITION( plt->plt_type >= PL_NUM_PLOT_TYPES, API_BAD_INPUT); 
 	/* 
-	 * the following are done based  
-	 * on function requirements
+	 * validate plot requirements  
+	 * 
 	 */
-	C_SAFE_CALL( plt_validate_requirements(plt, x, y, z ) );
+	C_CHECK_CONDITION( plt_val_req_func_ptr[plt->plt_type]==NULL, API_BAD_INPUT);
+	C_CHECK_CONDITION( plt_aux_data_func_ptr[plt->plt_type]==NULL, API_BAD_INPUT);
+	C_SAFE_CALL( plt_val_req_func_ptr(plt, x, y, z ) );
 	
 	/* allocate memory for the layer */
 	C_SAFE_CALL(layer = mem_alloc( sizeof(plt_layer_t), true) );
@@ -139,7 +142,7 @@ void plt_add_layer(plot_t * plt, const double * x, const double * y, const doubl
 	 * and linestyle are to be given later
 	 * for now just set them to none
 	 */
-	
+	C_SAFE_CALL( plt_val_req_func_ptr(plt, x, y, z ) );
 	/* add layer to plot and increase num layers */
 
 	SET_API_ERROR( API_SUCCESS );

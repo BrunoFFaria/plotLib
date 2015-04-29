@@ -28,7 +28,7 @@
 													};
 								 
 		/* validate requirements on new layer */
-		typedef void (* plt_val_req_func_ptr)(plot_t *, double *, double *, double *, int32_t);
+		typedef void (* plt_val_req_func_ptr)(plot_t *, double *, double *, double *);
 		plt_val_req_func_ptr[PL_NUM_PLOT_TYPES] = {	
 														plt_2d_line_req,
 														plt_3d_line_req,
