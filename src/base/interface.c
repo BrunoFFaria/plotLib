@@ -235,6 +235,9 @@ void check_plts_windows(void){
 				 /* use variable name or subplot + link name */
 				 pL.window_int[i] = createWindow(buffer);
 				 
+				 /* set reshape callback */
+				 glutReshapeFunc(plt_reshape_window);
+				 
 				 /* get the plots belonging to this subplot */
 				 for(j = i+1; j < pL.num_plts; j++){
 					if( pL.plts[j]->subplot_link == link){
@@ -256,6 +259,7 @@ void check_plts_windows(void){
 			     snprintf(buffer,VAR_NAME_LIMIT,"plot_%d",i);
 				 /* use variable name or subplot + link name */
 				 pL.window_int[i] = createWindow(buffer);
+				 glutReshapeFunc(plt_reshape_window);
 			}
 		}
 	}

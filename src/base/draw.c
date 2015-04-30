@@ -47,12 +47,40 @@ static void plt_draw(void)
 		/*
 		 * subplotting enabled?
 		 */
+		if(pL.plts[i]->subplot_state){
+			
+			vp_xstart = 
+			vp_xend =
+			vp_ystart =
+			vp_yend = 
+			
+			/* set viewport */
+			glViewport( )
 		
+		}
+		
+		/*
+		 * call draw module
+		 */
+		plt_draw_func_ptr[pL.plts[i]->plt_type]();
 		
 		/*
 		 * draw axes
 		 */
 	}
+}
+/*
+ * Reshape callback
+ */
+static void plt_reshape(int width, int height){
+	/* 
+	 * before calling plt_reshape glut 
+	 * sets the current window to the 
+	 * reshaped window, so use it to 
+	 * track which window to modify
+	 */
+
+	 
 }
 
 static void plt_redraw(void){

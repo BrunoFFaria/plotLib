@@ -87,6 +87,10 @@
 			/* window and subplotting handler */
 			int32_t * windown_handle;
 			
+			/* window width and height */
+			int32_t * width;
+			int32_t * height;
+			
 			/* thread handle, lock state and plot window handle */
 			#ifdef WIN32
 				HANDLE h_thread;
