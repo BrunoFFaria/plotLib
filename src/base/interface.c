@@ -233,7 +233,8 @@ void check_plts_windows(void){
 				 snprintf(buffer,VAR_NAME_LIMIT,"subplot_%d",link);
 				 
 				 /* use variable name or subplot + link name */
-				 pL.window_int[i] = createWindow(buffer);
+				 pL.window_int[i] = glutCreateWindow(buffer);
+				 glutInitWindowSize(pL.window_w[i],pL.window_h[j]);
 				 
 				 /* set reshape callback */
 				 glutReshapeFunc(plt_reshape_window);
@@ -258,7 +259,8 @@ void check_plts_windows(void){
 			}else{
 			     snprintf(buffer,VAR_NAME_LIMIT,"plot_%d",i);
 				 /* use variable name or subplot + link name */
-				 pL.window_int[i] = createWindow(buffer);
+				 pL.window_int[i] = glutCreateWindow(buffer);
+				 glutInitWindowSize(pL.window_w[i],pL.window_h[j]);
 				 glutReshapeFunc(plt_reshape_window);
 			}
 		}
@@ -293,7 +295,12 @@ void check_plts_windows(void){
 		C_SAFE_CALL( pL.windown_int = mem_realloc(
 							pL.windown_int, (pL.num_plts+1) * sizeof(int32_t)
 					);
-	
+		C_SAFE_CALL( pL.window_w = mem_realloc(
+							pL.window_w, (pL.num_plts+1) * sizeof(int32_t)
+					);
+		C_SAFE_CALL( pL.window_h = mem_realloc(
+							pL.window_h, (pL.num_plts+1) * sizeof(int32_t)
+					);
 		/* work out subplot dim pointers */
 		for(i = 1; i < pL.num_plts+1; i++ )
 			subplot_dim[i] = subplot_dim[0] + i * 2;
@@ -309,7 +316,8 @@ void check_plts_windows(void){
 		 */
 		
 		pL.window_int[pL.num_plts-1] = -1;
-		
+		pL.window_w[pL.num_plts-1] = 400;
+		pL.window_h[pL.num_plts-1] = 350;
 		C_SAFE_CALL( release_lock() );
 		lock_acquired = false;
 	}
@@ -407,6 +415,8 @@ error:
 	for(j=i+1; j < pL.num_plts;j++){
 		pL.plts[j-1] = pL.plts[j];
 		pL.window_handle[j-1] = pL.window_handle[j];
+		pL.window_w[j-1] = pL.window_w[j];
+		pL.window_h[j-1] = pL.window_h[j];
 	}
 	
 	pL.num_plts--;

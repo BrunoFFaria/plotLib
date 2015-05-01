@@ -37,7 +37,8 @@
 													};
 							
 		/* draw functions */
-		typedef void (* plt_draw_func_ptr)(plot_t *, int32_t, int32_t);
+		/* layer, x, y, z, layer, num_layers */
+		typedef void (* plt_draw_func_ptr)(void *, double *, double *, double *, int32_t, int32_t);
 		plt_draw_func_ptr[PL_NUM_PLOT_TYPES] = {	
 													plt_2d_line_draw,
 													plt_3d_line_draw,

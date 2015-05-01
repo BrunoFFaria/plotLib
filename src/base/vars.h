@@ -88,8 +88,8 @@
 			int32_t * windown_handle;
 			
 			/* window width and height */
-			int32_t * width;
-			int32_t * height;
+			int32_t * window_w;
+			int32_t * window_h;
 			
 			/* thread handle, lock state and plot window handle */
 			#ifdef WIN32

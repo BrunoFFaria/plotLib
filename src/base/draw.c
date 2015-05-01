@@ -15,7 +15,7 @@ static void plt_idle(void)
 
 
 /* 
- * Core draw function: call the 
+ * Core draw function: call  
  * every plot type draw method
  */
 static void plt_draw(void)
@@ -48,21 +48,29 @@ static void plt_draw(void)
 		 * subplotting enabled?
 		 */
 		if(pL.plts[i]->subplot_state){
-			
-			vp_xstart = 
-			vp_xend =
-			vp_ystart =
-			vp_yend = 
+			/*
+			 * grab window dimensions
+			 */
+			w = pL.window_width[i];
+			h = pL.window_height[i];
+			num_plots_w = pL.plts[i]->subplot_dim[0];
+			num_plots_h = pL.plts[i]->subplot_dim[1];
+			num_plot = pL.plts[i]->subplot_num;
+			vp_xstart = (num_plot%num_plots_w)*w/num_plots_w; 
+			vp_xend = vp_xstart + w/num_plots_w - 1;
+			vp_ystart = num_plot/w * h/num_plots_h;
+			vp_yend = vp_ystart + h/num_plots_h;
 			
 			/* set viewport */
-			glViewport( )
-		
+			glViewport(vp_xstart, vp_ystart, vp_xend, vp_yend );
 		}
 		
 		/*
-		 * call draw module
+		 * call draw module on each layer
 		 */
-		plt_draw_func_ptr[pL.plts[i]->plt_type]();
+		 for(j = 0; j < pL.plts[i]->num_layers;j++)
+			plt_draw_func_ptr[pL.plts[i]->plt_type]
+					(pL.plts[i]->plot_layer, int32_t, int32_t);
 		
 		/*
 		 * draw axes
