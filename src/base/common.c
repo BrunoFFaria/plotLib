@@ -9,3 +9,15 @@ void plt_adjust_mapminmax(const plot_t * plt, const double * x, const double * y
 
 	
 }
+
+
+void draw_2d_axes(){
+
+
+}
+
+
+void draw_3d_axes(){
+
+
+}

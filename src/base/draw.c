@@ -21,6 +21,7 @@ static void plt_idle(void)
 static void plt_draw(void)
 {
 	int32_t i = 0;
+	int32_t num_axis = 0;
 	/* for each plot type call 
 	 * the respective drawing function
 	 */ 
@@ -69,29 +70,52 @@ static void plt_draw(void)
 		 * call draw module on each layer
 		 */
 		 for(j = 0; j < pL.plts[i]->num_layers;j++)
-			plt_draw_func_ptr[pL.plts[i]->plt_type]
-					(pL.plts[i]->plot_layer, int32_t, int32_t);
+			num_axis = plt_draw_func_ptr[pL.plts[i]->plt_type]
+						(pL.plts[i]->plot_layer, int32_t, int32_t);
 		
 		/*
 		 * draw axes
 		 */
+		switch(num_axis){
+			case 2:
+				draw_2d_axis();
+				break;
+			case 3:
+				draw_3d_axis();
+				break;
+			default:
+				break;
+		}
 	}
 }
 /*
  * Reshape callback
  */
 static void plt_reshape(int width, int height){
+	int32_t i = 0;
+	int32_t window = glutGetWindow();
 	/* 
 	 * before calling plt_reshape glut 
 	 * sets the current window to the 
 	 * reshaped window, so use it to 
 	 * track which window to modify
 	 */
-
-	 
+	for(i = 0; i < pL.num_plts; i++)
+		if(pL.window_handle[i] == window){
+			/* we have the plot or 
+			 * one of the subplots 
+			 */
+			pL.window_w[i] = width;
+			pL.window_h[i] = height;
+			
+			/* fix subplot view port (do it on redraw) */
+		}
+		
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glFrustum(-5.0, 5.0, -h*2, h*2, 1.0, 300.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glTranslatef(0.0, 0.0, -60.0);
 }
 
-static void plt_redraw(void){
-
-
-}

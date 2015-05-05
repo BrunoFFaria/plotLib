@@ -16,9 +16,9 @@
 		 * and is called on layer creation
 		 */
 		/* declare pointer to function of this type 
-		 * functions are of the form void function(plot_t * plt, int32_t layer)
+		 * functions are of the form void * function(int32_t layer_num)
 		 */
-		typedef void (* plt_aux_data_func_ptr)(plot_t *, int32_t);
+		typedef void * (* plt_aux_data_func_ptr)(plot_t *, int32_t);
 		 
 		plt_aux_data_func_ptr[PL_NUM_PLOT_TYPES] = {	
 														plt_2d_line_aux, 
@@ -38,7 +38,7 @@
 							
 		/* draw functions */
 		/* layer, x, y, z, layer, num_layers */
-		typedef void (* plt_draw_func_ptr)(void *, double *, double *, double *, int32_t, int32_t);
+		typedef int32_t (* plt_draw_func_ptr)(void *, double *, double *, double *, int32_t, int32_t);
 		plt_draw_func_ptr[PL_NUM_PLOT_TYPES] = {	
 													plt_2d_line_draw,
 													plt_3d_line_draw,
@@ -56,7 +56,7 @@
 															plt_surf_layer,
 														};
 		/* free plot layer */
-		typedef void (*plt_free_aux_data_func_ptr);
+		typedef void (*plt_free_aux_data_func_ptr)(void *);
 		
 		plt_free_aux_data_func_ptr[PL_NUM_PLOT_TYPES] = {
 															plt_2d_line_free_aux,
