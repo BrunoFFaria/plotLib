@@ -4,7 +4,7 @@ static void plt_idle(void)
 {
 	const double now_t = ftime();
 	const double delta_t = now_t - last_t;
-	
+	static double last_t = 0;
   	if(delta_t > pL.wait_time )
   	{
 		/* update everything on screen */		
@@ -20,8 +20,9 @@ static void plt_idle(void)
  */
 static void plt_draw(void)
 {
-	int32_t i = 0;
+	int32_t i = 0, j = 0;
 	int32_t num_axis = 0;
+	int32_t vp_xstart = 0, vp_xend = 0, vp_ystart = 0, vp_yend = 0; 
 	/* for each plot type call 
 	 * the respective drawing function
 	 */ 

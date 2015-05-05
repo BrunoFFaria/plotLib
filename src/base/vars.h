@@ -1,8 +1,16 @@
 #ifndef VARSH
 	#define VARSH
-	
+		#include <inttypes.h>
+		#include <stddef.h>
+		#include <stdbool.h>
+		
+		#ifdef WIN32
+			#include <process.h>
+		#elif defined __linux__ || defined __FreeBSD__ || defined __APPLE__
+			#include <pthread.h>
+		#endif		
 		/* define the enumerator for plot type */
-		enum PLOT_TYPE{ LINE_2D, LINE_3D, SURF, MESH};
+		enum PLOT_TYPE{PL_LINE2D, PL_LINE3D, PL_MESH, PL_SURF, PL_NUM_PLOT_TYPES};
 		
 		/* define plot layer */
 		typedef struct plot_layer{
@@ -38,7 +46,7 @@
 			double zmin;
 			double zmax;
 			bool   state;
-		}tranf_map_t;
+		}transf_map_t;
 		
 		/* define our plot object */
 		typedef struct plot{
@@ -85,7 +93,7 @@
 			int32_t thread_msg;
 			
 			/* window and subplotting handler */
-			int32_t * windown_handle;
+			int32_t * window_handle;
 			
 			/* window width and height */
 			int32_t * window_w;

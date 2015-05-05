@@ -27,7 +27,7 @@ static void plt_2d_line_layer(int32_t property, int32_t value){
 }
 
 
-static void plt_2d_line_free_aux(void * ){
+static void plt_2d_line_free_aux(void * ptr){
 
 
 

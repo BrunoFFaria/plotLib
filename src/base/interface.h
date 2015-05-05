@@ -3,7 +3,7 @@
 	#include <stdarg.h>
 	
 	/* pl defines all the current state of plotlib */
-	extern plotLib pL;
+	extern plotLib_t pL;
 	
 	void plotlib_thread(void);
 	void check_plts_windows(void);
