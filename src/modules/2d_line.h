@@ -1,5 +1,5 @@
-#ifndef 2D_LINEH
-	#define 2D_LINEH
+#ifndef LINE2D_H
+	#define LINE2D_H
 	
 	
 	
