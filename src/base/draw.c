@@ -2,9 +2,10 @@
 
 static void plt_idle(void)
 {
+	static double last_t = 0;
 	const double now_t = ftime();
 	const double delta_t = now_t - last_t;
-	static double last_t = 0;
+	
   	if(delta_t > pL.wait_time )
   	{
 		/* update everything on screen */		
@@ -53,8 +54,8 @@ static void plt_draw(void)
 			/*
 			 * grab window dimensions
 			 */
-			w = pL.window_width[i];
-			h = pL.window_height[i];
+			w = pL.window_w[i];
+			h = pL.window_h[i];
 			num_plots_w = pL.plts[i]->subplot_dim[0];
 			num_plots_h = pL.plts[i]->subplot_dim[1];
 			num_plot = pL.plts[i]->subplot_num;
@@ -72,7 +73,7 @@ static void plt_draw(void)
 		 */
 		 for(j = 0; j < pL.plts[i]->num_layers;j++)
 			num_axis = plt_draw_func_ptr[pL.plts[i]->plt_type]
-						(pL.plts[i]->plot_layer, int32_t, int32_t);
+						(pL.plts[i]->layers[j], int32_t, int32_t);
 		
 		/*
 		 * draw axes
@@ -93,7 +94,7 @@ static void plt_draw(void)
  * Reshape callback
  */
 static void plt_reshape(int width, int height){
-	int32_t i = 0;
+	int32_t i = 0, h = 0;
 	int32_t window = glutGetWindow();
 	/* 
 	 * before calling plt_reshape glut 

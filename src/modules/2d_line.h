@@ -4,8 +4,9 @@
 	/*
 	 * specify the object controlling the layer properties
 	 */
-	enum linetype{ };
-	typedef prop_2d_layer{
+	enum PLT_LINETYPE{ plt_LineType_NONE };
+	enum PLT_SYMBOLTYPE{ plt_SymbolType_NONE };
+	typedef struct prop_2d_layer{
 			uint32_t 	color;
 			int32_t 	line_type;
 			int32_t 	line_width;

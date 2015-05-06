@@ -80,6 +80,8 @@
 		
 		/* plot lib state object */
 		typedef struct plotLib{
+			/* time to wait till redraw*/
+			double wait_time;
 			/* plot objects */
 			plot_t ** plts;
 			
