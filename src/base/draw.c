@@ -21,8 +21,9 @@ static void plt_idle(void)
 static void plt_draw(void)
 {
 	int32_t i = 0, j = 0;
-	int32_t num_axis = 0;
+	int32_t num_axis = 0, w = 0, h = 0;
 	int32_t vp_xstart = 0, vp_xend = 0, vp_ystart = 0, vp_yend = 0; 
+	int32_t num_plots_h = 0, num_plots_w = 0, num_plot = 0;
 	/* for each plot type call 
 	 * the respective drawing function
 	 */ 
@@ -43,8 +44,7 @@ static void plt_draw(void)
 		/*
 		 * change to the plt window
 		 */
-		 if(glutSetWindow(pL.window_handle[i])==0)
-			continue;
+		 glutSetWindow(pL.window_handle[i]);
 		
 		/*
 		 * subplotting enabled?

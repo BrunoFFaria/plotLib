@@ -1,18 +1,27 @@
 #include "2d_line.h"
 /* 
- *
+ * specify the object 
  *
  */
 static void * plt_2d_line_aux(int32_t layer_num){
 	
+	/*
+	 * Allocate space on the layer for the layer properties
+	 *
+	 */
 
 
 }
 
 
-static void plt_2d_line_req(plot_t * plt, const double * x, const double * y, const double * z){
-
-
+static int32_t plt_2d_line_req(plot_t * plt, const double * x, const double * y, const double * z){
+	/* two lines of data are required  */
+	C_CHECK_CONDITION( x == NULL, API_DATA_NOT_VALID);
+	C_CHECK_CONDITION( y == NULL, API_DATA_NOT_VALID);
+	
+	return 0;
+error:
+	return -1;
 }
 
 

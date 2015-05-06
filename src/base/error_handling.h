@@ -1,7 +1,7 @@
 #ifndef ERRORHANDLERH
 	#define ERRORHANDLERH
-/* error codes */
-enum error_codes{
+	/* error codes */
+	enum error_codes{
 		API_SUCCESS,	
 		API_ALLOCATION_ERROR,
 		API_REALLOC,
