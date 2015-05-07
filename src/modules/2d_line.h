@@ -11,6 +11,7 @@
 			int32_t 	line_type;
 			int32_t 	line_width;
 			int32_t 	line_symbol;
+			int32_t 	color_map;
 			}prop_2d_layer_t;	
 	
 	static void * plt_2d_line_aux(int32_t layer_num);
