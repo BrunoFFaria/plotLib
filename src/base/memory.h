@@ -4,7 +4,7 @@
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <stdbool.h>
-	
+	#include <string.h>
 	#include "error_handling.h"
 	
 	void * mem_realloc(void * ptr, int32_t new_sz);

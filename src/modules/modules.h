@@ -29,8 +29,7 @@
 		/* validate requirements on new layer */
 		typedef int32_t (* plt_val_req_func_ptr_t)(plot_t *, const double *, const double *, const double *);
 		plt_val_req_func_ptr_t
-			plt_val_req_func_ptr[PL_NUM_PLOT_TYPES] = {	
-														plt_2d_line_req,
+			plt_val_req_func_ptr[PL_NUM_PLOT_TYPES] = {	plt_2d_line_req,
 														plt_3d_line_req,
 														plt_mesh_req,
 														plt_surf_req
@@ -40,11 +39,10 @@
 		/* layer, x, y, z, layer, num_layers */
 		typedef int32_t (* plt_draw_func_ptr_t)(void *, const double *, const double *, const double *, int32_t, int32_t);
 		plt_draw_func_ptr_t 
-			plt_draw_func_ptr[PL_NUM_PLOT_TYPES] = {	
-														plt_2d_line_draw,
+			plt_draw_func_ptr[PL_NUM_PLOT_TYPES] = {	plt_2d_line_draw,
 														plt_3d_line_draw,
 														plt_mesh_draw,
-														plt_surf_req
+														plt_surf_draw
 													};
 		
 		/* functions to be called on layer property change */

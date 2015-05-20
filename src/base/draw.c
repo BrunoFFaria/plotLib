@@ -25,6 +25,8 @@ static void plt_draw(void)
 	int32_t num_axis = 0, w = 0, h = 0;
 	int32_t vp_xstart = 0, vp_xend = 0, vp_ystart = 0, vp_yend = 0; 
 	int32_t num_plots_h = 0, num_plots_w = 0, num_plot = 0;
+	
+	plt_layer_t layer;
 	/* for each plot type call 
 	 * the respective drawing function
 	 */ 
@@ -71,10 +73,15 @@ static void plt_draw(void)
 		/*
 		 * call draw module on each layer
 		 */
-		 for(j = 0; j < pL.plts[i]->num_layers;j++)
+		 for(j = 0; j < pL.plts[i]->num_layers;j++){
+			layer = pL.plts[i]->layers[j];
 			num_axis = plt_draw_func_ptr[pL.plts[i]->plt_type]
-						(pL.plts[i]->layers[j], int32_t, int32_t);
+						(layer.aux_layer_data, 
+						layer.x, layer.y, layer.z,
+						j, 
+						pL.plts[i]->num_layers);
 		
+		 }
 		/*
 		 * draw axes
 		 */

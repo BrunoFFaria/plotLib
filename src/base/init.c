@@ -1,5 +1,5 @@
 #include "init.h"
-#include "ogl.h"
+#include "draw.h"
 
 
 /* 
@@ -9,7 +9,7 @@
 int32_t plotLib_init(void){
 	
 	/* verify if object thread is already active */
-	if(!PL.thread_state){
+	if(!pL.thread_state){
 		#ifdef WIN32
 			C_CHECK_CONDITION( 
 				( pL.h_thread = _beginthread( plotlib_thread, 0, NULL ) ) == -1L, 
