@@ -25,13 +25,23 @@ error:
 
 static int32_t plt_2d_line_draw(void * ptr, const double * x, const double * y, const double * z, int32_t layer, int32_t num_layers){
 	prop_2d_layer_t * prop = NULL;
+	int32_t color = 0;
 	
 	/* validate memory area */
 	if(ptr == NULL){ goto default_action; }
 	
 	prop = ptr;
+	
 	/* get color
 	 */
+	 if(prop->color == NONE ){
+		/* 
+		 * user must have specified a given color, or not...
+		 */
+		
+	 }else{
+		color = get_colormap_color( prop->color );
+	 }
 	
 	
 	/* time to draw the data 
