@@ -2,10 +2,10 @@
 	#define INTERFACEH
 	#include <stdarg.h>
 	
-	/* pl defines all the current state of plotlib */
+	/* pL defines all the current state of plotlib */
 	extern plotLib_t pL;
 	
-	void plotlib_thread(void);
+	void plotlib_thread(void * arg);
 	void check_plts_windows(void);
 	void plt_show(plot_t * plt);
 	void plt_add_layer(plot_t * plt);

@@ -11,7 +11,7 @@
 plotLib_t pL;
 
 /* function responsible to keep the object updated on screen */
-void plotlib_thread(void)
+void plotlib_thread(void * arg)
 {
 	int fake = 0;
 	glutInit(&fake, NULL);
@@ -67,27 +67,27 @@ error:
  *
  */
  #define plt_grab_minmax(var, ind, min_v, max_v)	\
-		 do{										\
-			if(var!=NULL){							\
-				if(!(isnan(var[ind])==true ||		\
-					isinf(var[ind] == true)) ){		\
-					if(var[ind]>max_v){				\
-						max_v = var[ind];			\
-					}								\
-					if(var[ind)<min_v){				\
-						min_v = var[ind];			\
-					}								\
-				}else{								\
-					C_LOG_MSG("invalid number");	\
-				}									\
+		 do{														\
+			if(var!=NULL){										\
+				if(!(isnan(var[ind])==true ||				\
+					isinf(var[ind] == true)) ){				\
+					if(var[ind]>max_v){						\
+						max_v = var[ind];					\
+					}												\
+					if(var[ind)<min_v){						\
+						min_v = var[ind];						\
+					}												\
+				}else{											\
+					C_LOG_MSG("invalid number");		\
+				}													\
 			}while(0)			
 
-#define plt_ss_vals(var, min_v, max_v)		\
-		do{									\
-			if(var!=NULL){					\
-				min_v = var[0];				\
-				max_v = var[0];				\
-			}								\
+#define plt_ss_vals(var, min_v, max_v)				\
+		do{														\
+			if(var!=NULL){										\
+				min_v = var[0];								\
+				max_v = var[0];								\
+			}														\
 		}while(0)
 		
 void plt_add_layer(plot_t * plt, const double * x, const double * y, const double * z, size_t size){

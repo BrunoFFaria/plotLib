@@ -52,7 +52,7 @@ void plotLib_stop(void){
 		CloseHandle(pL.h_thread);
 	#elif defined __linux__ || defined __FreeBSD__ || defined __APPLE__
 		
-		pthread_join(&pL.h_thread);
+		pthread_join(pL.h_thread, NULL);
 		pthread_mutex_destroy(&pL.lock);
 	#endif 
 }

@@ -32,21 +32,24 @@ int32_t plt_2d_line_draw(void * ptr, const double * x, const double * y, const d
 	
 	prop = ptr;
 	
-	/* get color
+	/* get the color to be used
 	 */
-	 if(prop->color == NONE ){
+	 if(prop->color == NONE && prop->user_color == NONE){
 		/* 
 		 * user must have specified a given color, or not...
 		 */
+		color = get_colormap_color( prop->color, layer, num_layers);
 		
 	 }else{
-		color = get_colormap_color( prop->color );
+		 
+		
 	 }
 	
 	
 	/* time to draw the data 
 	 */
 	
+	/* only push data points that are in range */
 	
 	/* */
 default_action:
