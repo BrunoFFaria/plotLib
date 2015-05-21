@@ -12,5 +12,7 @@
 		 * for all drawing commands: meaning calling the required
 		 * modules from the modules folder...
 		 */
-	 			
+	 	void plt_idle(void);
+	 	void plt_draw(void);
+	 	void plt_reshape(int width, int height);
 #endif

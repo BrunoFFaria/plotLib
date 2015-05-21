@@ -1,6 +1,6 @@
 #include "draw.h"
 
-static void plt_idle(void)
+void plt_idle(void)
 {
 	static double last_t = 0;
 	const double now_t = ftime();
@@ -19,7 +19,7 @@ static void plt_idle(void)
  * Core draw function: call  
  * every plot type draw method
  */
-static void plt_draw(void)
+void plt_draw(void)
 {
 	int32_t i = 0, j = 0;
 	int32_t num_axis = 0, w = 0, h = 0;
@@ -100,7 +100,7 @@ static void plt_draw(void)
 /*
  * Reshape callback
  */
-static void plt_reshape(int width, int height){
+void plt_reshape(int width, int height){
 	int32_t i = 0, h = 0;
 	int32_t window = glutGetWindow();
 	/* 

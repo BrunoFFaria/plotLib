@@ -11,7 +11,11 @@
 plotLib_t pL;
 
 /* function responsible to keep the object updated on screen */
+#ifdef WIN32
 void plotlib_thread(void * arg)
+#elif defined __linux__ || defined __FreeBSD__ || defined __APPLE__
+void * plotlib_thread(void * arg)
+#endif
 {
 	int fake = 0;
 	glutInit(&fake, NULL);
