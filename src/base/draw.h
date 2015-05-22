@@ -14,5 +14,5 @@
 		 */
 	 	void plt_idle(void);
 	 	void plt_draw(void);
-	 	void plt_reshape(int width, int height);
+	 	void plt_reshape_window(int width, int height);
 #endif

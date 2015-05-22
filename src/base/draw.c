@@ -26,7 +26,7 @@ void plt_draw(void)
 	int32_t vp_xstart = 0, vp_xend = 0, vp_ystart = 0, vp_yend = 0; 
 	int32_t num_plots_h = 0, num_plots_w = 0, num_plot = 0;
 	
-	plt_layer_t layer;
+	plt_layer_t * layer = NULL;
 	/* for each plot type call 
 	 * the respective drawing function
 	 */ 
@@ -76,8 +76,8 @@ void plt_draw(void)
 		 for(j = 0; j < pL.plts[i]->num_layers;j++){
 			layer = pL.plts[i]->layers[j];
 			num_axis = plt_draw_func_ptr[pL.plts[i]->plt_type]
-						(layer.aux_layer_data, 
-						layer.x, layer.y, layer.z,
+						(layer->aux_layer_data, 
+						layer->x, layer->y, layer->z,
 						j, 
 						pL.plts[i]->num_layers);
 		
@@ -100,7 +100,7 @@ void plt_draw(void)
 /*
  * Reshape callback
  */
-void plt_reshape(int width, int height){
+void plt_reshape_window(int width, int height){
 	int32_t i = 0, h = 0;
 	int32_t window = glutGetWindow();
 	/* 

@@ -74,17 +74,18 @@ error:
 		 do{														\
 			if(var!=NULL){										\
 				if(!(isnan(var[ind])==true ||				\
-					isinf(var[ind] == true)) ){				\
+					isinf(var[ind]) == true) ){				\
 					if(var[ind]>max_v){						\
 						max_v = var[ind];					\
 					}												\
-					if(var[ind)<min_v){						\
+					if(var[ind]<min_v){						\
 						min_v = var[ind];						\
 					}												\
 				}else{											\
 					C_LOG_MSG("invalid number");		\
 				}													\
-			}while(0)			
+			}											\
+		}while(0)			
 
 #define plt_ss_vals(var, min_v, max_v)				\
 		do{														\
@@ -96,6 +97,7 @@ error:
 		
 void plt_add_layer(plot_t * plt, const double * x, const double * y, const double * z, size_t size){
 	plt_layer_t * layer = NULL;
+	int32_t i = 0;
 	
 	C_CHECK_CONDITION( plt == NULL, API_BAD_INPUT);
 	C_CHECK_CONDITION( size <= 0, API_BAD_INPUT);
@@ -107,7 +109,7 @@ void plt_add_layer(plot_t * plt, const double * x, const double * y, const doubl
 	 */
 	C_CHECK_CONDITION( plt_val_req_func_ptr[plt->plt_type]==NULL, API_BAD_INPUT);
 	C_CHECK_CONDITION( plt_aux_data_func_ptr[plt->plt_type]==NULL, API_BAD_INPUT);
-	C_SAFE_CALL( plt_val_req_func_ptr(plt, x, y, z ) );
+	C_SAFE_CALL( plt_val_req_func_ptr[plt->plt_type](plt, x, y, z ) );
 	
 	/* allocate memory for the layer */
 	C_SAFE_CALL(layer = mem_alloc( sizeof(plt_layer_t), true) );
@@ -146,9 +148,12 @@ void plt_add_layer(plot_t * plt, const double * x, const double * y, const doubl
 	 * and linestyle are to be given later
 	 * for now just set them to none
 	 */
-	C_SAFE_CALL( plt_val_req_func_ptr(plt, x, y, z ) );
+	C_SAFE_CALL( layer->aux_layer_data = plt_aux_data_func_ptr[plt->plt_type](plt->num_layers) );
+	
 	/* add layer to plot and increase num layers */
-
+	C_SAFE_CALL( mem_realloc(plt->layers, (plt->num_layers++) ) );
+	plt->layers[plt->num_layers-1] = layer;
+	
 	SET_API_ERROR( API_SUCCESS );
 	return;
 error:
@@ -174,8 +179,7 @@ void plt_multiplot(int32_t dim_x, int32_t dim_y, ...){
 	plot_t * plt;
 	int32_t i = 0;
 	
-	C_CHECK_CONDITION( dim_x * dim_y <= 0, 
-		"Warning: wrong matrix dimensions - multiplot - \"no object specified\"");
+	C_CHECK_CONDITION( dim_x * dim_y <= 0, API_MATRIX_BAD_FORM );
 	
 	va_start(ap,dim_y); 
 	va_copy(ap_c, ap);
@@ -184,14 +188,12 @@ void plt_multiplot(int32_t dim_x, int32_t dim_y, ...){
 		/* consume arguments one by one */
 		plt = va_arg(ap, plot_t *);
 		
-		C_CHECK_CONDITION( plt == NULL && (i+1) <= dim_x*dim_y,   
-			"Warning: matrix badly formatted wrong number of arguments or invalid plot");
+		C_CHECK_CONDITION( plt == NULL && (i+1) <= dim_x*dim_y, API_BAD_MATRIX_PLT);
 	}
 	
 	/* check if the last argument is null if it is not give error*/
 	plt = va_arg(ap, plot_t *);
-	C_CHECK_CONDITION( plt!=NULL,   
-			"Warning: matrix badly formatted or wrong number of arguments");
+	C_CHECK_CONDITION( plt!=NULL, API_BAD_MATRIX_INPUT);
 	
 	va_end(ap);
 	
@@ -199,8 +201,8 @@ void plt_multiplot(int32_t dim_x, int32_t dim_y, ...){
 	for(i = 0; i < dim_x * dim_y ; i++){
 		plt = va_arg(ap_c, plot_t *);
 		plt->subplot_state = true;
-		plt->subplot_dim[0] = x_dim;
-		plt->subplot_dim[1] = y_dim;
+		plt->subplot_dim[0] = dim_x;
+		plt->subplot_dim[1] = dim_y;
 		plt->subplot_num = i;
 		plt->subplot_link = link;
 	}
@@ -224,7 +226,7 @@ void check_plts_windows(void){
 	
 	char buffer[VAR_NAME_LIMIT];
 	for(i = 0; i < pL.num_plts; i++){
-		if( pL.window_int[i] == -1 ){
+		if( pL.window_handle[i] == -1 ){
 			/* is subplotting enabled ? */
 			if( pL.plts[i]->subplot_state == true ){
 				/* locate all plots 
@@ -237,7 +239,7 @@ void check_plts_windows(void){
 				 snprintf(buffer,VAR_NAME_LIMIT,"subplot_%d",link);
 				 
 				 /* use variable name or subplot + link name */
-				 pL.window_int[i] = glutCreateWindow(buffer);
+				 pL.window_handle[i] = glutCreateWindow(buffer);
 				 glutInitWindowSize(pL.window_w[i],pL.window_h[j]);
 				 
 				 /* set reshape callback */
@@ -251,11 +253,11 @@ void check_plts_windows(void){
 						 * is the same as this one don't
 						 * do nothing otherwise kill it
 						 */
-						if( pL.window_int[j] != -1){
-							if(pL.window_int[j] != pL.window_int[i]){
-								glutDestroyWindow(pL.window_int[j]);
+						if( pL.window_handle[j] != -1){
+							if(pL.window_handle[j] != pL.window_handle[i]){
+								glutDestroyWindow(pL.window_handle[j]);
 							}
-							pL.window_int[j] = pL.window_int[i];
+							pL.window_handle[j] = pL.window_handle[i];
 						}
 					}
 				 }
@@ -263,7 +265,7 @@ void check_plts_windows(void){
 			}else{
 			     snprintf(buffer,VAR_NAME_LIMIT,"plot_%d",i);
 				 /* use variable name or subplot + link name */
-				 pL.window_int[i] = glutCreateWindow(buffer);
+				 pL.window_handle[i] = glutCreateWindow(buffer);
 				 glutInitWindowSize(pL.window_w[i],pL.window_h[j]);
 				 glutReshapeFunc(plt_reshape_window);
 			}
@@ -296,30 +298,27 @@ void check_plts_windows(void){
 							pL.plts, (pL.num_plts+1) * sizeof(plot_t *)) 
 					);
 					
-		C_SAFE_CALL( pL.windown_int = mem_realloc(
-							pL.windown_int, (pL.num_plts+1) * sizeof(int32_t)
+		C_SAFE_CALL( pL.window_handle = mem_realloc(
+							pL.window_handle, (pL.num_plts+1) * sizeof(int32_t))
 					);
 		C_SAFE_CALL( pL.window_w = mem_realloc(
-							pL.window_w, (pL.num_plts+1) * sizeof(int32_t)
+							pL.window_w, (pL.num_plts+1) * sizeof(int32_t))
 					);
 		C_SAFE_CALL( pL.window_h = mem_realloc(
-							pL.window_h, (pL.num_plts+1) * sizeof(int32_t)
+							pL.window_h, (pL.num_plts+1) * sizeof(int32_t))
 					);
-		/* work out subplot dim pointers */
-		for(i = 1; i < pL.num_plts+1; i++ )
-			subplot_dim[i] = subplot_dim[0] + i * 2;
 			
 		pL.num_plts++;
 		
 		/* add new plt to the queue */
-		pL.plts[pL.num_plts-1] = plt;
+		pL.plts[pL.num_plts-1] = (plot_t *)plt;
 		
 		/* needs to be sorted out!!! 
 		 * the variables need to be filled before registering 
 		 * (maybe we need to have them on each plot and copy them to pL)
 		 */
 		
-		pL.window_int[pL.num_plts-1] = -1;
+		pL.window_handle[pL.num_plts-1] = -1;
 		pL.window_w[pL.num_plts-1] = 400;
 		pL.window_h[pL.num_plts-1] = 350;
 		C_SAFE_CALL( release_lock() );
@@ -327,7 +326,7 @@ void check_plts_windows(void){
 	}
 	
 	
-	SET_API_ERROR(API_SUCCESS;
+	SET_API_ERROR(API_SUCCESS);
 	return;
 error:
 	if(lock_acquired == true)
@@ -337,10 +336,10 @@ error:
  }
  
  /* schedule plot to be drawn on screen */
- void queue_plt_redraw(plot_t * plt){
+ void queue_plt_redraw(const plot_t * plt){
 	int32_t i = 0;
 	bool lock_acquired = false;
-	plot_t * layer = NULL;
+	plt_layer_t * layer = NULL;
 	/* verify if plt is in the queue */
 	for(i = 0; i < pL.num_plts; i++){
 		if(pL.plts[i]==plt)
@@ -376,9 +375,9 @@ error:
 			layer->size_data = layer->size;
 		}
 		/* copy data */
-		memset(layer->xdata, layer->x, layer->size * sizeof(double));
-		memset(layer->ydata, layer->y, layer->size * sizeof(double));
-		memset(layer->zdata, layer->z, layer->size * sizeof(double));
+		memcpy(layer->xdata, layer->x, layer->size * sizeof(double));
+		memcpy(layer->ydata, layer->y, layer->size * sizeof(double));
+		memcpy(layer->zdata, layer->z, layer->size * sizeof(double));
 	}
 	
 	C_SAFE_CALL( release_lock() );
@@ -436,8 +435,7 @@ error:
 	if(plt->subplot_state){
 		
 		/* get subplot link value */
-		C_CHECK_CONDITION( (link = plt -> subplot_link) == 0, 
-										"invalid subplot link");
+		C_CHECK_CONDITION( (link = plt -> subplot_link) == 0, API_INVALID_SUBPLOT_LINK);
 		
 		/* look for plots with the same link */
 		for(j=0; j < pL.num_plts; j++ )

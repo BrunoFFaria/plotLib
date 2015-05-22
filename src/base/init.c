@@ -13,18 +13,18 @@ int32_t plotLib_init(void){
 		#ifdef WIN32
 			C_CHECK_CONDITION( 
 				( pL.h_thread = _beginthread( plotlib_thread, 0, NULL ) ) == -1L, 
-				"thread init failed" );
+				API_THREAD_INIT_FAIL );
 			C_CHECK_CONDITION( 
 				( pL.lock = CreateMutex( NULL, FALSE, NULL) ) == NULL,
-				"mutex init failed" );
+				API_MUTEX_INIT_FAIL );
 			 
 		#elif defined __linux__ || defined __FreeBSD__ || defined __APPLE__
 			C_CHECK_CONDITION( 
 				pthread_create(&pL.h_thread, NULL, plotlib_thread, NULL) != 0,
-				"thread init failed" );
+				API_THREAD_INIT_FAIL );
 			C_CHECK_CONDITION( 
 				pthread_mutex_init(&pL.lock, NULL) != 0, 
-				"mutex init failed" ); 
+				API_MUTEX_INIT_FAIL); 
 			
 		#endif
 		pL.thread_state = true;

@@ -43,7 +43,7 @@ uint32_t plt_get_hsv_color(float h, float s, float v){
 	
 	x = c * (1 - abs( fmodf(hl, 2) - 1));
 		
-	switch(floor(hl))
+	switch((int32_t)floor(hl))
 	{
 		case 0:	r = c; 	g = x; break;
 		case 1: r = x; 	g = c; break;
@@ -115,7 +115,7 @@ static void XYZ_to_RGB(float X, float Y, float Z, float * R, float * G, float * 
 
 static int32_t plt_get_hcl_as_rgb(float h, float c, float l){
 
-	float L = 0, U = 0, V = 0, X = 0, Y = 0, Z = 0, R = 0, G = 0, Z = 0;
+	float L = 0, U = 0, V = 0, X = 0, Y = 0, Z = 0, R = 0, G = 0, B = 0;
 	polarLUV_to_LUV(l, c, h, &L, &U, &V);
 	LUV_to_XYZ(L, U, V,  &X, &Y, &Z);
 	XYZ_to_RGB(X, Y, Z, &R, &G, &B);
@@ -127,7 +127,7 @@ static int32_t plt_get_hcl_as_rgb(float h, float c, float l){
 				);
 }
 void plt_get_hue_color( int32_t color , int32_t num_colors ){
-	plt_get_hcl_color(h, 0.65f, 1.0f);
+	plt_get_hcl_color(color/(num_colors+1), 0.65f, 1.0f);
 }
 
 

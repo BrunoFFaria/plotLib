@@ -58,7 +58,7 @@
 			int32_t num_layers;
 			
 			/* plot layers */
-			plt_layer_t * layers;
+			plt_layer_t ** layers;
 			
 			/* transform mapping properties */
 			transf_map_t map;
