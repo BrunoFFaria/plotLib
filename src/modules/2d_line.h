@@ -1,6 +1,8 @@
 #ifndef LINE2D_H
 	#define LINE2D_H
-	
+	#include <inttypes.h>
+	#include "../base/vars.h"
+	#include "../base/error_handling.h"
 	/*
 	 * specify the object controlling the layer properties
 	 */

@@ -15,5 +15,7 @@ const char * error_strings[NUM_ERROR_CODES]={"API SUCCESS",
 											 "API error invalid subplot link",
 											 "API unregister plot",
 											 "API error could not create plot",
-											 "API error could not destroy plot"
+											 "API error could not destroy plot",
+											 "API error: something is wrong with your data"
+											 
 											 };
